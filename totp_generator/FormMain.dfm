@@ -4,7 +4,7 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'TOTP generator'
-  ClientHeight = 161
+  ClientHeight = 180
   ClientWidth = 295
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -36,11 +36,11 @@ object frmMain: TfrmMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 142
+    Top = 161
     Width = 295
     Height = 19
     Panels = <>
-    ExplicitTop = 143
+    ExplicitTop = 142
   end
   object btnGenerate: TButton
     Left = 8
@@ -94,7 +94,6 @@ object frmMain: TfrmMain
     end
     object miView: TMenuItem
       Caption = 'View'
-      Visible = False
       object miViewLog: TMenuItem
         Action = actShowLog
       end

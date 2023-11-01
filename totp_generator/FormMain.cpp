@@ -19,6 +19,30 @@
 #pragma resource "*.dfm"
 TfrmMain *frmMain;
 //---------------------------------------------------------------------------
+
+namespace
+{
+
+int64_t GetUnixTime(void)
+{
+	FILETIME ft;
+	LARGE_INTEGER li;
+
+	/* Get the amount of 100 nano seconds intervals elapsed since January 1, 1601 (UTC) and copy it
+	* to a LARGE_INTEGER structure. */
+	GetSystemTimeAsFileTime(&ft);
+	li.LowPart = ft.dwLowDateTime;
+	li.HighPart = ft.dwHighDateTime;
+
+	int64_t ret = li.QuadPart;
+	ret -= 116444736000000000LL; /* Convert from file time to UNIX epoch time. */
+	ret /= 10000000LL;
+
+	return ret;
+}
+
+}
+
 __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 	: TForm(Owner),
 	outdatedTime(0)
@@ -102,7 +126,7 @@ void __fastcall TfrmMain::FormShow(TObject *Sender)
 		CLog::Instance()->SetLevel(E_LOG_TRACE);
 		CLog::Instance()->callbackLog = frmLog->OnLog;
 	}
-	LOG("Application started");
+	LOG("Application started\n");
 }
 //---------------------------------------------------------------------------
 
@@ -166,7 +190,10 @@ void __fastcall TfrmMain::btnGenerateClick(TObject *Sender)
 	uint64_t x = 30; /* step in seconds */
 	uint64_t t; /* number of steps */
 
-	time_t now = time(NULL);
+	int64_t now = GetUnixTime();
+
+	LOG("Generating, current time = %lld\n", now);
+
 	t = now / x;
 	outdatedTime = (t + 1) * x;
 
@@ -208,7 +235,7 @@ void __fastcall TfrmMain::btnCopyToClipboardClick(TObject *Sender)
 
 void __fastcall TfrmMain::tmrRefreshOtpTimer(TObject *Sender)
 {
-	time_t now = time(NULL);
+	int64_t now = GetUnixTime();
 
 	if (outdatedTime != 0)
 	{
